@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	// DefaultTTL is default time to live for the lock.
 	DefaultTTL = 5 * time.Minute
 )
 
