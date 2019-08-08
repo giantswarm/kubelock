@@ -28,7 +28,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 
 	// Check if there is non expired lock acquired and error if so.
 	{
-		data, ok, err := getData(obj, l.lockName)
+		data, ok, err := l.data(obj)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -78,7 +78,7 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 
 	// Check if the lock exists and fail if it doesn't.
 	{
-		_, ok, err := getData(obj, l.lockName)
+		_, ok, err := l.data(obj)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -107,9 +107,9 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 	return nil
 }
 
-func getData(obj *unstructured.Unstructured, lockName string) (lockData, bool, error) {
+func (l *lock) data(obj *unstructured.Unstructured) (lockData, bool, error) {
 	ann := obj.GetAnnotations()
-	stringData, ok := ann[lockAnnotation(lockName)]
+	stringData, ok := ann[lockAnnotation(l.lockName)]
 	if !ok {
 		return lockData{}, false, nil
 	}

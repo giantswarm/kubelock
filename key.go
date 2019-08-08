@@ -2,7 +2,6 @@ package kubelock
 
 import "time"
 
-// TODO add tests
 func isExpired(data lockData) bool {
 	return data.CreatedAt.Add(data.TTL).Before(time.Now())
 }
