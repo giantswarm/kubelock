@@ -107,9 +107,9 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 	return nil
 }
 
-func (l *lock) data(obj *unstructured.Unstructured) (string, bool, error) {
+func (l *lock) data(obj *unstructured.Unstructured) (lockData, bool, error) {
 	ann := obj.GetAnnotations()
-	stringData, ok := ann[lockAnnotation(lockName)]
+	stringData, ok := ann[lockAnnotation(l.lockName)]
 	if !ok {
 		return lockData{}, false, nil
 	}
