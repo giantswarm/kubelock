@@ -1,5 +1,18 @@
 package kubelock
 
+import (
+	"time"
+)
+
+type LockOptions struct {
+	TTL time.Duration
+}
+
+type lockData struct {
+	CreatedAt time.Time     `json:"createdAt"`
+	TTL       time.Duration `json:"ttl"`
+}
+
 type jsonPatch []jsonPatchOperation
 
 type jsonPatchOperation struct {

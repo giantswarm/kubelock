@@ -13,14 +13,14 @@ type namespaceableLock struct {
 	lockName string
 }
 
-func (l *namespaceableLock) Acquire(ctx context.Context, name string) error {
+func (l *namespaceableLock) Acquire(ctx context.Context, name string, options LockOptions) error {
 	underlying := &lock{
 		resource: l.resource,
 
 		lockName: l.lockName,
 	}
 
-	err := underlying.Acquire(ctx, name)
+	err := underlying.Acquire(ctx, name, options)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -36,14 +36,14 @@ func (l *namespaceableLock) Namespace(ns string) Lock {
 	}
 }
 
-func (l *namespaceableLock) Release(ctx context.Context, name string) error {
+func (l *namespaceableLock) Release(ctx context.Context, name string, options LockOptions) error {
 	underlying := &lock{
 		resource: l.resource,
 
 		lockName: l.lockName,
 	}
 
-	err := underlying.Release(ctx, name)
+	err := underlying.Release(ctx, name, options)
 	if err != nil {
 		return microerror.Mask(err)
 	}
