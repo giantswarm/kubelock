@@ -33,7 +33,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 			return microerror.Mask(err)
 		}
 		if ok && !isExpired(data) {
-			return microerror.Maskf(executionFailedError, "lock %#q on %#q already acquired at %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
+			return microerror.Maskf(alreadyExistError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
 		}
 	}
 
@@ -83,7 +83,7 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 			return microerror.Mask(err)
 		}
 		if !ok {
-			return microerror.Maskf(executionFailedError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
+			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
 		}
 	}
 
