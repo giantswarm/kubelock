@@ -6,5 +6,5 @@ import (
 	"testing"
 )
 
-func TestInstall(t *testing.T) {
+func TestBasic(t *testing.T) {
 }

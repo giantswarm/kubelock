@@ -24,7 +24,6 @@ func Setup(m *testing.M, config Config) {
 }
 
 func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
-
 	// Create namespace.
 	{
 		err := config.K8sSetup.EnsureNamespaceCreated(ctx, "testing")
