@@ -4,10 +4,6 @@ import (
 	"time"
 )
 
-func lockAnnotation(name string) string {
-	return "kubelock.giantswarm.io/" + name
-}
-
 func isExpired(data lockData) bool {
 	return data.CreatedAt.Add(data.TTL).Before(time.Now())
 }
