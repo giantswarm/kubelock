@@ -1,0 +1,22 @@
+apiVersion: "core.giantswarm.io/v1alpha1"
+kind: "CertConfig"
+metadata:
+  name: "{{ .Values.cluster.id }}-node-operator"
+  namespace: "default"
+  labels:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "node-operator"
+    giantswarm.io/certificate: "node-operator"
+    giantswarm.io/cluster: "{{ .Values.cluster.id }}"
+spec:
+  cert:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "node-operator"
+    commonName: "api.{{ .Values.cluster.id }}.k8s.{{ .Values.commonDomain }}"
+    altNames:
+    ipSans:
+    ttl: "720h"
+    allowBareDomains: false
+    organizations:
+  versionBundle:
+    version: "0.1.0"
