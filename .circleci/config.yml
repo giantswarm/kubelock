@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 e2eTest: &e2eTest
     machine: true
     working_directory: /home/circleci/.go_workspace/src/github.com/giantswarm/kubelock
@@ -46,17 +45,12 @@ e2eTest: &e2eTest
         when: always
 
 version: 2.1
-=======
-version: 2.1
-
->>>>>>> master
 jobs:
   build:
     machine: true
     steps:
     - checkout
 
-<<<<<<< HEAD
     - run:
         name: Get architect binary
         command: |
@@ -89,22 +83,3 @@ workflows:
       - e2eTestBasic:
           requires:
           - build
-=======
-    - run: |
-        wget -q $(curl -sS -H "Authorization: token $RELEASE_TOKEN" https://api.github.com/repos/giantswarm/architect/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)
-        chmod +x ./architect
-        ./architect version
-    - run: ./architect build
-    - store_test_results:
-        path: /tmp/results
-    - persist_to_workspace:
-        root: .
-        paths:
-          - ./architect
-
-workflows:
-  version: 2
-  build_e2e:
-    jobs:
-      - build
->>>>>>> master
