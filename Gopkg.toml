@@ -9,3 +9,7 @@
 [[constraint]]
   name = "k8s.io/client-go"
   version = "kubernetes-1.13.2"
+
+[[constraint]]
+  name = "github.com/giantswarm/e2e-harness"
+  revision = "094ac65a5e97510adafec48e7bb35944b9e346e8"
