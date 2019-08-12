@@ -39,6 +39,7 @@
   revision = "4763148864dc4815b691a69b4f60b4f4a8f88dad"
 
 [[projects]]
+  branch = "master"
   digest = "1:8aca27b8a7db0d89630680925de131ae82488d7b359208448710082dacbe366c"
   name = "github.com/giantswarm/e2e-harness"
   packages = ["pkg/harness"]
