@@ -14,13 +14,13 @@ var executionFailedError = &microerror.Error{
 	Kind: "executionFailedError",
 }
 
-var alreadyExistError = &microerror.Error{
-	Kind: "alreadyExistError",
+var alreadyExistsError = &microerror.Error{
+	Kind: "alreadyExistsError",
 }
 
-// IsAlreadyExist asserts alreadyExistError.
-func IsAlreadyExist(err error) bool {
-	return microerror.Cause(err) == alreadyExistError
+// IsAlreadyExists asserts alreadyExistsError.
+func IsAlreadyExists(err error) bool {
+	return microerror.Cause(err) == alreadyExistsError
 }
 
 var notFoundError = &microerror.Error{

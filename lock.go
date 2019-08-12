@@ -33,13 +33,18 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 			return microerror.Mask(err)
 		}
 		if ok && !isExpired(data) {
-			return microerror.Maskf(alreadyExistError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
+			if data.Owner == options.Owner {
+				return microerror.Maskf(alreadyExistsError, "lock %#q on %#q owned by %#q already acquired at %s with TTL %s", l.lockName, obj.GetSelfLink(), data.Owner, data.CreatedAt.Format(time.RFC3339), data.TTL)
+			} else {
+				return microerror.Maskf(ownerMismatchError, "lock %#q on %#q owned by %#q already acquired at %s with TTL %s", l.lockName, obj.GetSelfLink(), data.Owner, data.CreatedAt.Format(time.RFC3339), data.TTL)
+			}
 		}
 	}
 
 	var data []byte
 	{
 		d := lockData{
+			Onwer:     options.Owner,
 			CreatedAt: time.Now(),
 			TTL:       options.TTL,
 		}
@@ -78,12 +83,15 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 
 	// Check if the lock exists and fail if it doesn't.
 	{
-		_, ok, err := l.data(obj)
+		data, ok, err := l.data(obj)
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		if !ok {
+		if !ok || isExpired(data) {
 			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
+		}
+		if ok && !isExpired(data) && data.Owner != options.Owner {
+			return microerror.Maskf(ownerMismatchError, "lock %#q on %#q is not owned by %#q", l.lockName, obj.GetSelfLink(), options.Owner)
 		}
 	}
 
