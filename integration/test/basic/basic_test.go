@@ -3,10 +3,9 @@
 package basic
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestBasic(t *testing.T) {
-	fmt.Sprintf("%s", "Basic test")
+	t.Log("Basic test")
 }
