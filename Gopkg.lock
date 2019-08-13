@@ -28,7 +28,7 @@
     "pkg/clientset/versioned/typed/release/v1alpha1",
   ]
   pruneopts = ""
-  revision = "60518c8c0e8902a8919127ee4c3fb2c8f7929422"
+  revision = "6d6990ab19fc21766e67aec28d8ab62aede51a6a"
 
 [[projects]]
   branch = "master"
@@ -299,14 +299,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0b5c2207c72f2d13995040f176feb6e3f453d6b01af2b9d57df76b05ded2e926"
+  digest = "1:6a8bd8cb9a92bd007831755e08d5f62810ecf6718e70cc38f0a85a91819a9497"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = ""
-  revision = "51ab0e2deafac1f46c46ad59cf0921be2f180c3d"
+  revision = "fde4db37ae7ad8191b03d30d27f258b5291ae4e3"
 
 [[projects]]
   digest = "1:740b51a55815493a8d0f2b1e0d0ae48fe48953bf7eaf3fcc4198823bf67768c0"
