@@ -13,3 +13,15 @@
 [[constraint]]
   name = "github.com/giantswarm/e2e-harness"
   branch = "master"
+
+[[constraint]]
+  name = "github.com/giantswarm/e2esetup"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/giantswarm/microerror"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/giantswarm/micrologger"
+  branch = "master"
