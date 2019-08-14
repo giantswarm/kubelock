@@ -19,6 +19,10 @@
   branch = "master"
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/giantswarm/k8sclient"
+
+[[constraint]]
   name = "github.com/giantswarm/microerror"
   branch = "master"
 
