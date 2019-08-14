@@ -158,6 +158,20 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:9fcb267c272bc5054564b392e3ff7e65e35400fd9914afb1d169f92b95e7dbc9"
+  name = "github.com/google/go-cmp"
+  packages = [
+    "cmp",
+    "cmp/internal/diff",
+    "cmp/internal/flags",
+    "cmp/internal/function",
+    "cmp/internal/value",
+  ]
+  pruneopts = ""
+  revision = "2d0692c2e9617365a95b295612ac0d4415ba4627"
+  version = "v0.3.1"
+
+[[projects]]
   digest = "1:8d4a577a9643f713c25a32151c0f26af7228b4b97a219b5ddb7fd38d16f6e673"
   name = "github.com/google/gofuzz"
   packages = ["."]
@@ -570,6 +584,7 @@
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/microerror",
     "github.com/giantswarm/micrologger",
+    "github.com/google/go-cmp/cmp",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured",
     "k8s.io/apimachinery/pkg/runtime/schema",
