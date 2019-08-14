@@ -16,7 +16,7 @@ type Config struct {
 	// E.g. for Namespace resource it can be instantiated like:
 	//
 	//	schema.GroupVersionResource{
-	//		Group:    "core",
+	//		Group:    "",
 	//		Version:  "v1",
 	//		Resource: "namespaces",
 	//	}
@@ -44,9 +44,6 @@ func New(config Config) (*KubeLock, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.DynClient must not be empty", config)
 	}
 
-	if config.GVR.Group == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.GVR.Group must not be empty", config)
-	}
 	if config.GVR.Version == "" {
 		return nil, microerror.Maskf(invalidConfigError, "%T.GVR.Version must not be empty", config)
 	}

@@ -2,12 +2,10 @@ package kubelock
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/dynamic"
 )
 
@@ -39,19 +37,22 @@ func (l *lock) Acquire(ctx context.Context, name string) error {
 		data = []byte("TODO")
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newAcquirePatch(obj.GetResourceVersion(), l.lockName, data)
+		ann := obj.GetAnnotations()
+		if ann == nil {
+			ann = map[string]string{}
+		}
+		ann[lockAnnotation(l.lockName)] = string(data)
+		obj.SetAnnotations(ann)
+	}
 
-		patch, err = json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
-	}
-
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
 	}
 
 	return nil
@@ -72,21 +73,19 @@ func (l *lock) Release(ctx context.Context, name string) error {
 		}
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newReleasePatch(obj.GetResourceVersion(), l.lockName)
+		ann := obj.GetAnnotations()
+		delete(ann, lockAnnotation(l.lockName))
+		obj.SetAnnotations(ann)
+	}
 
-		bs, err := json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
-
-		patch = bs
-	}
-
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
 	}
 
 	return nil
