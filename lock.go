@@ -43,7 +43,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions)
 	var data []byte
 	{
 		d := lockData{
-			Onwer:     options.Owner,
+			Owner:     options.Owner,
 			CreatedAt: time.Now().UTC(),
 			TTL:       options.TTL,
 		}

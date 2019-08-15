@@ -17,7 +17,7 @@ type ReleaseOptions struct {
 }
 
 type lockData struct {
-	Onwer     string        `json:"onwer"`
+	Owner     string        `json:"owner"`
 	CreatedAt time.Time     `json:"createdAt"`
 	TTL       time.Duration `json:"ttl"`
 }
