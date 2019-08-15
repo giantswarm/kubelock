@@ -30,6 +30,7 @@ e2eTest: &e2eTest
             -v $(pwd)/${E2E_TEST_DIR}:/e2e \
             -v $(pwd):/go/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} \
             -e E2E_KUBECONFIG=/e2e/kubeconfig \
+            -e E2E_TEST_DIR=${E2E_TEST_DIR} \
             -e CIRCLE_SHA1=${CIRCLE_SHA1} \
             -w /go/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} \
             quay.io/giantswarm/golang:1.12.6 go test -v -tags k8srequired ./${E2E_TEST_DIR}/

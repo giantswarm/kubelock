@@ -1,7 +1,0 @@
-version: 1
-
-test:
-  env:
-    - "CIRCLE_SHA1=${CIRCLE_SHA1}"
-    - "E2E_TEST_DIR=${E2E_TEST_DIR}"
-    - "E2E_KUBECONFIG=${E2E_KUBECONFIG}"
