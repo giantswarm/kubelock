@@ -26,7 +26,7 @@ func (l *lock) Acquire(ctx context.Context, name string) error {
 		ann := obj.GetAnnotations()
 		_, ok := ann[lockAnnotation(l.lockName)]
 		if ok {
-			return microerror.Maskf(alreadyExistError, "lock %#q on %#q already acquired", l.lockName, obj.GetSelfLink())
+			return microerror.Maskf(alreadyExistsError, "lock %#q on %#q already acquired", l.lockName, obj.GetSelfLink())
 		}
 	}
 
