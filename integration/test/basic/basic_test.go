@@ -42,8 +42,8 @@ func TestBasic_ClusterScope(t *testing.T) {
 	}
 
 	err = lock.Acquire(ctx, "default")
-	if !kubelock.IsAlreadyExist(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExist", microerror.Stack(err))
+	if !kubelock.IsAlreadyExists(err) {
+		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
 	}
 
 	err = lock.Release(ctx, "default")
@@ -87,8 +87,8 @@ func TestBasic_Namespaced(t *testing.T) {
 	}
 
 	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy")
-	if !kubelock.IsAlreadyExist(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExist", microerror.Stack(err))
+	if !kubelock.IsAlreadyExists(err) {
+		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
 	}
 
 	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy")
