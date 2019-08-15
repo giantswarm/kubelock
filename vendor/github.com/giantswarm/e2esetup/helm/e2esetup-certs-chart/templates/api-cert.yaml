@@ -1,0 +1,35 @@
+apiVersion: "core.giantswarm.io/v1alpha1"
+kind: "CertConfig"
+metadata:
+  name: "{{ .Values.cluster.id }}-api"
+  namespace: "default"
+  labels:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "api"
+    giantswarm.io/certificate: "api"
+    giantswarm.io/cluster: "{{ .Values.cluster.id }}"
+spec:
+  cert:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "api"
+    commonName: "api.{{ .Values.cluster.id }}.k8s.{{ .Values.commonDomain }}"
+    altNames:
+    - "{{ .Values.cluster.id }}.k8s.{{ .Values.commonDomain }}"
+    - "k8s-master-vm"
+    - "kubernetes"
+    - "kubernetes.default"
+    - "kubernetes.default.svc"
+    - "kubernetes.default.svc.cluster.local"
+    - "master.{{ .Values.cluster.id }}"
+    ipSans:
+      {{ range .Values.ipSans }}
+      - {{ . }}
+      {{ end }}
+    ttl: "720h"
+    allowBareDomains: true
+    organizations:
+      {{ range .Values.organizations }}
+      - {{ . }}
+      {{ end }}
+  versionBundle:
+    version: "0.1.0"

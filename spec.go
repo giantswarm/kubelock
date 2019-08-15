@@ -15,11 +15,11 @@ const (
 //
 // The typical usage for a namespace resource may look like:
 //
-//	kubeLock.Lock("my-lock-name").Namespace("my-namespace").Acquire(ctx, "my-configmap", kubelock.LockOptions{})
+//	kubeLock.Lock("my-lock-name").Namespace("my-namespace").Acquire(ctx, "my-configmap", kubelock.AcquireOptions{})
 //
 // The typical usage for a cluster scope resource may look like:
 //
-//	kubeLock.Lock("my-lock-name").Acquire(ctx, "my-namespace", kubelock.LockOptions{})
+//	kubeLock.Lock("my-lock-name").Acquire(ctx, "my-namespace", kubelock.ReleaseOptions{})
 //
 type Interface interface {
 	// Lock creates a lock with the given name. The name will be used to
@@ -42,7 +42,7 @@ type Lock interface {
 	// This method returns and error matched by IsOwnerMismatch if the lock
 	// already exists on the resource and it is not expired but was acquired
 	// by a different owner (set in options).
-	Acquire(ctx context.Context, name string, options LockOptions) error
+	Acquire(ctx context.Context, name string, options AcquireOptions) error
 	// Release tries to release the lock on a Kubernetes resource with the
 	// given name.
 	//
@@ -52,7 +52,7 @@ type Lock interface {
 	// This method returns an error matched by IsOwnerMismatch if the lock
 	// already exists and it is not expired but it was acquired by
 	// a different owner (set in options).
-	Release(ctx context.Context, name string, options LockOptions) error
+	Release(ctx context.Context, name string, options ReleaseOptions) error
 }
 
 type NamespaceableLock interface {

@@ -8,7 +8,6 @@ import (
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/dynamic"
 )
 
@@ -18,8 +17,8 @@ type lock struct {
 	lockName string
 }
 
-func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) error {
-	options = defaultedOptions(options)
+func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions) error {
+	options = defaultedAcquireOptions(options)
 
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
@@ -45,7 +44,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 	{
 		d := lockData{
 			Onwer:     options.Owner,
-			CreatedAt: time.Now(),
+			CreatedAt: time.Now().UTC(),
 			TTL:       options.TTL,
 		}
 
@@ -55,26 +54,29 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 		}
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newAcquirePatch(obj.GetResourceVersion(), l.lockName, data)
+		ann := obj.GetAnnotations()
+		if ann == nil {
+			ann = map[string]string{}
+		}
+		ann[lockAnnotation(l.lockName)] = string(data)
+		obj.SetAnnotations(ann)
+	}
 
-		patch, err = json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
 	}
 
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
 	return nil
 }
 
-func (l *lock) Release(ctx context.Context, name string, options LockOptions) error {
-	options = defaultedOptions(options)
+func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions) error {
+	options = defaultedReleaseOptions(options)
 
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
@@ -87,29 +89,38 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		if !ok || isExpired(data) {
+		// Lock exists and it's expired and owner matches.
+		if ok && isExpired(data) && data.Owner == options.Owner {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q owned by %#q is expired", l.lockName, obj.GetSelfLink(), options.Owner)
+		}
+		// Lock doesn't exist.
+		if !ok {
 			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
 		}
-		if ok && !isExpired(data) && data.Owner != options.Owner {
-			return microerror.Maskf(ownerMismatchError, "lock %#q on %#q is not owned by %#q", l.lockName, obj.GetSelfLink(), options.Owner)
+		// Lock exists and it's expired and owner doesn't match.
+		if isExpired(data) {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q is expired and it is not owned by %#q but %#q", l.lockName, obj.GetSelfLink(), options.Owner, data.Owner)
+		}
+		// Lock exists, it isn't expired and owner doesn't match. Note
+		// that in this case different error is returned.
+		if data.Owner != options.Owner {
+			return microerror.Maskf(ownerMismatchError, "lock %#q on %#q is not owned by %#q but %#q", l.lockName, obj.GetSelfLink(), options.Owner, data.Owner)
 		}
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newReleasePatch(obj.GetResourceVersion(), l.lockName)
+		ann := obj.GetAnnotations()
+		delete(ann, lockAnnotation(l.lockName))
+		obj.SetAnnotations(ann)
+	}
 
-		bs, err := json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
-
-		patch = bs
-	}
-
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
 	}
 
 	return nil
