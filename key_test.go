@@ -18,7 +18,7 @@ func Test_isExpired(t *testing.T) {
 		{
 			name: "case 0: not expired",
 			inputLockData: lockData{
-				CreatedAt: time.Now().Add(2 * time.Minute),
+				CreatedAt: time.Now().UTC().Add(2 * time.Minute),
 				TTL:       30 * time.Second,
 			},
 			expectedExpired: false,
@@ -27,7 +27,7 @@ func Test_isExpired(t *testing.T) {
 		{
 			name: "case 1: expired",
 			inputLockData: lockData{
-				CreatedAt: time.Now().Add(-5 * time.Minute),
+				CreatedAt: time.Now().UTC().Add(-5 * time.Minute),
 				TTL:       2 * time.Minute,
 			},
 			expectedExpired: true,

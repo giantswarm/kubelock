@@ -1,0 +1,23 @@
+apiVersion: "core.giantswarm.io/v1alpha1"
+kind: "CertConfig"
+metadata:
+  name: "{{ .Values.cluster.id }}-etcd"
+  namespace: "default"
+  labels:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "etcd"
+    giantswarm.io/certificate: "etcd"
+    giantswarm.io/cluster: "{{ .Values.cluster.id }}"
+spec:
+  cert:
+    clusterID: "{{ .Values.cluster.id }}"
+    clusterComponent: "etcd"
+    commonName: "etcd.{{ .Values.cluster.id }}.k8s.{{ .Values.commonDomain }}"
+    altNames:
+    ipSans:
+    - 127.0.0.1
+    ttl: "720h"
+    allowBareDomains: false
+    organizations:
+  versionBundle:
+    version: "0.1.0"

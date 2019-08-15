@@ -8,7 +8,6 @@ import (
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/dynamic"
 )
 
@@ -18,9 +17,7 @@ type lock struct {
 	lockName string
 }
 
-func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) error {
-	options = defaultedOptions(options)
-
+func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions) error {
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
@@ -33,15 +30,15 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 			return microerror.Mask(err)
 		}
 		if ok && !isExpired(data) {
-			return microerror.Maskf(alreadyExistError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
+			return microerror.Maskf(alreadyExistsError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
 		}
 	}
 
 	var data []byte
 	{
 		d := lockData{
-			CreatedAt: time.Now(),
-			TTL:       options.TTL,
+			CreatedAt: time.Now().UTC(),
+			TTL:       defaultedAcquireOptions(options).TTL,
 		}
 
 		data, err = json.Marshal(d)
@@ -50,27 +47,28 @@ func (l *lock) Acquire(ctx context.Context, name string, options LockOptions) er
 		}
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newAcquirePatch(obj.GetResourceVersion(), l.lockName, data)
+		ann := obj.GetAnnotations()
+		if ann == nil {
+			ann = map[string]string{}
+		}
+		ann[lockAnnotation(l.lockName)] = string(data)
+		obj.SetAnnotations(ann)
+	}
 
-		patch, err = json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
 	}
 
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
 	return nil
 }
 
-func (l *lock) Release(ctx context.Context, name string, options LockOptions) error {
-	options = defaultedOptions(options)
-
+func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions) error {
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
@@ -78,30 +76,30 @@ func (l *lock) Release(ctx context.Context, name string, options LockOptions) er
 
 	// Check if the lock exists and fail if it doesn't.
 	{
-		_, ok, err := l.data(obj)
+		data, ok, err := l.data(obj)
 		if err != nil {
 			return microerror.Mask(err)
 		}
 		if !ok {
 			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
+		} else if isExpired(data) {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q is expired", l.lockName, obj.GetSelfLink())
 		}
 	}
 
-	var patch []byte
+	// Update object annotations.
 	{
-		p := newReleasePatch(obj.GetResourceVersion(), l.lockName)
+		ann := obj.GetAnnotations()
+		delete(ann, lockAnnotation(l.lockName))
+		obj.SetAnnotations(ann)
+	}
 
-		bs, err := json.Marshal(p)
+	// Update object.
+	{
+		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
-
-		patch = bs
-	}
-
-	_, err = l.resource.Patch(name, types.JSONPatchType, patch, metav1.UpdateOptions{})
-	if err != nil {
-		return microerror.Mask(err)
 	}
 
 	return nil

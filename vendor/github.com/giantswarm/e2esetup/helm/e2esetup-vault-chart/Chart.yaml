@@ -1,0 +1,3 @@
+name: e2esetup-vault-chart
+version: 1.0.0-[[ .SHA ]]
+description: Vault installation for testing purposes.

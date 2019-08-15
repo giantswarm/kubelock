@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-func defaultedOptions(options LockOptions) LockOptions {
+func defaultedAcquireOptions(options AcquireOptions) AcquireOptions {
 	if options.TTL == 0 {
 		options.TTL = DefaultTTL
 	}
