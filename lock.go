@@ -2,6 +2,8 @@ package kubelock
 
 import (
 	"context"
+	"encoding/json"
+	"time"
 
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -15,26 +17,34 @@ type lock struct {
 	lockName string
 }
 
-func (l *lock) Acquire(ctx context.Context, name string) error {
+func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions) error {
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	// Check if there is lock acquired and error if so.
+	// Check if there is non expired lock acquired and error if so.
 	{
-		ann := obj.GetAnnotations()
-		_, ok := ann[lockAnnotation(l.lockName)]
-		if ok {
-			return microerror.Maskf(alreadyExistsError, "lock %#q on %#q already acquired", l.lockName, obj.GetSelfLink())
+		data, ok, err := l.data(obj)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+		if ok && !isExpired(data) {
+			return microerror.Maskf(alreadyExistsError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
 		}
 	}
 
 	var data []byte
 	{
-		// To simplify the PR I removed TTL and owner handling. That
-		// will come in the follow up PR.
-		data = []byte("TODO")
+		d := lockData{
+			CreatedAt: time.Now().UTC(),
+			TTL:       defaultedAcquireOptions(options).TTL,
+		}
+
+		data, err = json.Marshal(d)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 	}
 
 	// Update object annotations.
@@ -58,7 +68,7 @@ func (l *lock) Acquire(ctx context.Context, name string) error {
 	return nil
 }
 
-func (l *lock) Release(ctx context.Context, name string) error {
+func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions) error {
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
@@ -66,10 +76,14 @@ func (l *lock) Release(ctx context.Context, name string) error {
 
 	// Check if the lock exists and fail if it doesn't.
 	{
-		ann := obj.GetAnnotations()
-		_, ok := ann[lockAnnotation(l.lockName)]
+		data, ok, err := l.data(obj)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 		if !ok {
 			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
+		} else if isExpired(data) {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q is expired", l.lockName, obj.GetSelfLink())
 		}
 	}
 
@@ -91,14 +105,18 @@ func (l *lock) Release(ctx context.Context, name string) error {
 	return nil
 }
 
-func (l *lock) data(obj *unstructured.Unstructured) (string, bool, error) {
+func (l *lock) data(obj *unstructured.Unstructured) (lockData, bool, error) {
 	ann := obj.GetAnnotations()
 	stringData, ok := ann[lockAnnotation(l.lockName)]
 	if !ok {
-		return "", false, nil
+		return lockData{}, false, nil
 	}
 
-	// The name stringData and returning error is weird but it will make
-	// more sense when there is actual data.
-	return stringData, true, nil
+	var data lockData
+	err := json.Unmarshal([]byte(stringData), &data)
+	if err != nil {
+		return lockData{}, false, microerror.Mask(err)
+	}
+
+	return data, true, nil
 }

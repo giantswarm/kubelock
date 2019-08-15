@@ -36,22 +36,22 @@ func TestBasic_ClusterScope(t *testing.T) {
 
 	lock := kubeLock.Lock("test-lock")
 
-	err = lock.Acquire(ctx, "default")
+	err = lock.Acquire(ctx, "default", kubelock.AcquireOptions{})
 	if err != nil {
 		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
 	}
 
-	err = lock.Acquire(ctx, "default")
+	err = lock.Acquire(ctx, "default", kubelock.AcquireOptions{})
 	if !kubelock.IsAlreadyExists(err) {
 		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
 	}
 
-	err = lock.Release(ctx, "default")
+	err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 	if err != nil {
 		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
 	}
 
-	err = lock.Release(ctx, "default")
+	err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 	if !kubelock.IsNotFound(err) {
 		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
 	}
@@ -81,22 +81,22 @@ func TestBasic_Namespaced(t *testing.T) {
 
 	lock := kubeLock.Lock("test-lock")
 
-	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy")
+	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", kubelock.AcquireOptions{})
 	if err != nil {
 		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
 	}
 
-	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy")
+	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", kubelock.AcquireOptions{})
 	if !kubelock.IsAlreadyExists(err) {
 		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
 	}
 
-	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy")
+	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 	if err != nil {
 		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
 	}
 
-	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy")
+	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 	if !kubelock.IsNotFound(err) {
 		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
 	}

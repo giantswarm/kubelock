@@ -75,6 +75,13 @@ jobs:
       E2E_TEST_DIR: "integration/test/basic"
     <<: *e2eTest
 
+  e2eTestTTL:
+    environment:
+      TEST_DIR: "integration/test/ttl"
+      TEST_NAME: "ttl"
+      E2E_TEST_DIR: "integration/test/ttl"
+    <<: *e2eTest
+
 workflows:
   version: 2.1
   build_e2e:
@@ -82,5 +89,9 @@ workflows:
       - build
 
       - e2eTestBasic:
+          requires:
+          - build
+
+      - e2eTestTTL:
           requires:
           - build
