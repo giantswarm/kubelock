@@ -6,10 +6,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/giantswarm/kubelock"
-
 	"github.com/giantswarm/microerror"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"github.com/giantswarm/kubelock"
 )
 
 func TestOwner_ClusterScope(t *testing.T) {
