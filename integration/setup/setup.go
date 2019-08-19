@@ -4,7 +4,6 @@ package setup
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -16,7 +15,7 @@ func Setup(m *testing.M, config Config) {
 
 	v, err := setup(ctx, m, config)
 	if err != nil {
-		config.Logger.LogCtx(ctx, "level", "error", "message", "failed to setup test environment", "stack", fmt.Sprintf("%#v", err))
+		config.Logger.LogCtx(ctx, "level", "error", "message", "failed to setup test environment", "stack", microerror.Stack(err))
 		os.Exit(1)
 	}
 

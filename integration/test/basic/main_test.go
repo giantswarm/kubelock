@@ -3,7 +3,6 @@
 package basic
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/giantswarm/microerror"
@@ -18,7 +17,7 @@ var (
 func init() {
 	err := initMainTest()
 	if err != nil {
-		panic(fmt.Sprintf("%#v", err))
+		panic(microerror.Stack(err))
 	}
 }
 
