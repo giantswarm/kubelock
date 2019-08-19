@@ -26,8 +26,8 @@ type Interface interface {
 	// create annotation prefixed with "kubelock.giantswarm.io/" on the
 	// Kubernetes resource. Value of this annotation stores the lock data.
 	//
-	// NOTE: The name parameter is not validated but it must together with
-	// the annotation prefix motioned it must be a valid annotation key.
+	// NOTE: The name parameter is not validated but it must (together with
+	// the annotation prefix mentioned) be a valid annotation key.
 	Lock(name string) NamespaceableLock
 }
 
