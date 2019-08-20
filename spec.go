@@ -39,7 +39,7 @@ type Lock interface {
 	// already exists on the resource, it is not expired and it has the same
 	// owner (set in options).
 	//
-	// This method returns and error matched by IsOwnerMismatch if the lock
+	// This method returns an error matched by IsOwnerMismatch if the lock
 	// already exists on the resource and it is not expired but was acquired
 	// by a different owner (set in options).
 	Acquire(ctx context.Context, name string, options AcquireOptions) error
