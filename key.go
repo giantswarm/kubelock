@@ -12,6 +12,10 @@ func defaultedAcquireOptions(options AcquireOptions) AcquireOptions {
 	return options
 }
 
+func defaultedReleaseOptions(options ReleaseOptions) ReleaseOptions {
+	return options
+}
+
 func isExpired(data lockData) bool {
 	return data.CreatedAt.Add(data.TTL).Before(time.Now())
 }

@@ -72,6 +72,13 @@ jobs:
       E2E_TEST_NAME: "basic"
     <<: *e2eTest
 
+  e2eTestOwner:
+    environment:
+      TEST_DIR: "integration/test/owner"
+      TEST_NAME: "owner"
+      E2E_TEST_DIR: "integration/test/owner"
+    <<: *e2eTest
+
   e2eTestTTL:
     environment:
       E2E_TEST_DIR: "integration/test/ttl"
@@ -85,6 +92,10 @@ workflows:
       - build
 
       - e2eTestBasic:
+          requires:
+          - build
+
+      - e2eTestOwner:
           requires:
           - build
 

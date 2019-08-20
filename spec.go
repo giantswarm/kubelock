@@ -24,16 +24,34 @@ const (
 type Interface interface {
 	// Lock creates a lock with the given name. The name will be used to
 	// create annotation prefixed with "kubelock.giantswarm.io/" on the
-	// Kubernetes object. Value of this annotation stores the lock data.
+	// Kubernetes resource. Value of this annotation stores the lock data.
+	//
+	// NOTE: The name parameter is not validated but it must (together with
+	// the annotation prefix mentioned) be a valid annotation key.
 	Lock(name string) NamespaceableLock
 }
 
 type Lock interface {
 	// Acquire tries to acquire the lock on a Kubernetes resource with the
 	// given name.
+	//
+	// This method returns an error matched by IsAlreadyExists if the lock
+	// already exists on the resource, it is not expired and it has the same
+	// owner (set in options).
+	//
+	// This method returns an error matched by IsOwnerMismatch if the lock
+	// already exists on the resource and it is not expired but was acquired
+	// by a different owner (set in options).
 	Acquire(ctx context.Context, name string, options AcquireOptions) error
 	// Release tries to release the lock on a Kubernetes resource with the
 	// given name.
+	//
+	// This method returns an error matched by IsNotFound if the lock
+	// does not exist on the resource or it is expired.
+	//
+	// This method returns an error matched by IsOwnerMismatch if the lock
+	// already exists and it is not expired but it was acquired by
+	// a different owner (set in options).
 	Release(ctx context.Context, name string, options ReleaseOptions) error
 }
 

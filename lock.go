@@ -18,6 +18,8 @@ type lock struct {
 }
 
 func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions) error {
+	options = defaultedAcquireOptions(options)
+
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
@@ -30,15 +32,20 @@ func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions)
 			return microerror.Mask(err)
 		}
 		if ok && !isExpired(data) {
-			return microerror.Maskf(alreadyExistsError, "lock %#q on %#q already acquired on %s with TTL %s", l.lockName, obj.GetSelfLink(), data.CreatedAt.Format(time.RFC3339), data.TTL)
+			if data.Owner == options.Owner {
+				return microerror.Maskf(alreadyExistsError, "lock %#q on %#q owned by %#q already acquired at %s with TTL %s", l.lockName, obj.GetSelfLink(), data.Owner, data.CreatedAt.Format(time.RFC3339), data.TTL)
+			} else {
+				return microerror.Maskf(ownerMismatchError, "lock %#q on %#q owned by %#q already acquired at %s with TTL %s", l.lockName, obj.GetSelfLink(), data.Owner, data.CreatedAt.Format(time.RFC3339), data.TTL)
+			}
 		}
 	}
 
 	var data []byte
 	{
 		d := lockData{
+			Owner:     options.Owner,
 			CreatedAt: time.Now().UTC(),
-			TTL:       defaultedAcquireOptions(options).TTL,
+			TTL:       options.TTL,
 		}
 
 		data, err = json.Marshal(d)
@@ -69,6 +76,8 @@ func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions)
 }
 
 func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions) error {
+	options = defaultedReleaseOptions(options)
+
 	obj, err := l.resource.Get(name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
@@ -80,10 +89,22 @@ func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions)
 		if err != nil {
 			return microerror.Mask(err)
 		}
+		// Lock exists and it's expired and owner matches.
+		if ok && isExpired(data) && data.Owner == options.Owner {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q owned by %#q is expired", l.lockName, obj.GetSelfLink(), options.Owner)
+		}
+		// Lock doesn't exist.
 		if !ok {
 			return microerror.Maskf(notFoundError, "lock %#q on %#q not found", l.lockName, obj.GetSelfLink())
-		} else if isExpired(data) {
-			return microerror.Maskf(notFoundError, "lock %#q on %#q is expired", l.lockName, obj.GetSelfLink())
+		}
+		// Lock exists and it's expired and owner doesn't match.
+		if isExpired(data) {
+			return microerror.Maskf(notFoundError, "lock %#q on %#q is expired and it is not owned by %#q but %#q", l.lockName, obj.GetSelfLink(), options.Owner, data.Owner)
+		}
+		// Lock exists, it isn't expired and owner doesn't match. Note
+		// that in this case different error is returned.
+		if data.Owner != options.Owner {
+			return microerror.Maskf(ownerMismatchError, "lock %#q on %#q is not owned by %#q but %#q", l.lockName, obj.GetSelfLink(), options.Owner, data.Owner)
 		}
 	}
 
