@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/giantswarm/kubelock?status.svg)](http://godoc.org/github.com/giantswarm/kubelock) [![CircleCI](https://circleci.com/gh/giantswarm/kubelock.svg?style=shield)](https://circleci.com/gh/giantswarm/kubelock)
+
 # kubelock
 
 Package kubelock provides functionality to create distributed locks on
