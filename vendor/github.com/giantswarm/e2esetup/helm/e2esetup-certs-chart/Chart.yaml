@@ -1,3 +1,0 @@
-name: e2esetup-certs-chart
-version: 1.0.0-[[ .SHA ]]
-description: CertConfig CRs for testing purposes.
