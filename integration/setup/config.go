@@ -4,7 +4,6 @@ package setup
 
 import (
 	"github.com/giantswarm/e2e-harness/pkg/harness"
-	"github.com/giantswarm/e2esetup/k8s"
 	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -18,7 +17,7 @@ const (
 
 type Config struct {
 	K8sClients *k8sclient.Clients
-	K8sSetup   *k8s.Setup
+	K8sSetup   *k8sclient.Setup
 	Logger     micrologger.Logger
 }
 
@@ -53,14 +52,14 @@ func NewConfig() (Config, error) {
 		}
 	}
 
-	var k8sSetup *k8s.Setup
+	var k8sSetup *k8sclient.Setup
 	{
-		c := k8s.SetupConfig{
+		c := k8sclient.SetupConfig{
 			Clients: k8sClients,
 			Logger:  logger,
 		}
 
-		k8sSetup, err = k8s.NewSetup(c)
+		k8sSetup, err = k8sclient.NewSetup(c)
 		if err != nil {
 			return Config{}, microerror.Mask(err)
 		}
