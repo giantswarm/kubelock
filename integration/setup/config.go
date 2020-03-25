@@ -3,7 +3,6 @@
 package setup
 
 import (
-	"github.com/giantswarm/e2e-harness/pkg/harness"
 	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -36,14 +35,10 @@ func NewConfig() (Config, error) {
 
 	var k8sClients *k8sclient.Clients
 	{
-		kubeConfigPath := env.KubeConfigPath()
-		if kubeConfigPath == "" {
-			kubeConfigPath = harness.DefaultKubeConfig
-		}
-
 		c := k8sclient.ClientsConfig{
-			Logger:         logger,
-			KubeConfigPath: kubeConfigPath,
+			Logger: logger,
+
+			KubeConfigPath: env.KubeConfigPath(),
 		}
 
 		k8sClients, err = k8sclient.NewClients(c)

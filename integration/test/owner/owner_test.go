@@ -30,7 +30,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -44,7 +44,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -56,7 +56,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if !kubelock.IsAlreadyExists(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -68,7 +68,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -80,7 +80,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -92,7 +92,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Release(ctx, "default", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.JSON(err))
 		}
 	}
 
@@ -104,7 +104,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Release(ctx, "default", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.JSON(err))
 		}
 	}
 
@@ -115,7 +115,7 @@ func TestOwner_ClusterScope(t *testing.T) {
 		}
 		err = lock.Release(ctx, "default", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 }
@@ -138,7 +138,7 @@ func TestOwner_Namespaced(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -152,7 +152,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -164,7 +164,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if !kubelock.IsAlreadyExists(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -176,7 +176,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -188,7 +188,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 		}
 	}
 
@@ -200,7 +200,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.JSON(err))
 		}
 	}
 
@@ -212,7 +212,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", opts)
 		if !kubelock.IsOwnerMismatch(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsOwnerMismatch", microerror.JSON(err))
 		}
 	}
 
@@ -223,7 +223,7 @@ func TestOwner_Namespaced(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 }

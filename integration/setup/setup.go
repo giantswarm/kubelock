@@ -15,7 +15,7 @@ func Setup(m *testing.M, config Config) {
 
 	v, err := setup(ctx, m, config)
 	if err != nil {
-		config.Logger.LogCtx(ctx, "level", "error", "message", "failed to setup test environment", "stack", microerror.Stack(err))
+		config.Logger.LogCtx(ctx, "level", "error", "message", "failed to setup test environment", "stack", microerror.JSON(err))
 		os.Exit(1)
 	}
 

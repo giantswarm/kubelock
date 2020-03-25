@@ -31,7 +31,7 @@ func TestTTL_ClusterScope_Acquire(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -45,7 +45,7 @@ func TestTTL_ClusterScope_Acquire(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -58,7 +58,7 @@ func TestTTL_ClusterScope_Acquire(t *testing.T) {
 	{
 		err = lock.Acquire(ctx, "default", kubelock.AcquireOptions{})
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -66,7 +66,7 @@ func TestTTL_ClusterScope_Acquire(t *testing.T) {
 	{
 		err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 }
@@ -89,7 +89,7 @@ func TestTTL_ClusterScope_Release(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -103,7 +103,7 @@ func TestTTL_ClusterScope_Release(t *testing.T) {
 		}
 		err = lock.Acquire(ctx, "default", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -116,7 +116,7 @@ func TestTTL_ClusterScope_Release(t *testing.T) {
 	{
 		err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 		if !kubelock.IsNotFound(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.JSON(err))
 		}
 	}
 }
@@ -139,7 +139,7 @@ func TestBasic_Namespaced_Acquire(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -153,7 +153,7 @@ func TestBasic_Namespaced_Acquire(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -166,7 +166,7 @@ func TestBasic_Namespaced_Acquire(t *testing.T) {
 	{
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 		if !kubelock.IsNotFound(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.JSON(err))
 		}
 	}
 
@@ -174,7 +174,7 @@ func TestBasic_Namespaced_Acquire(t *testing.T) {
 	{
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", kubelock.AcquireOptions{})
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -182,7 +182,7 @@ func TestBasic_Namespaced_Acquire(t *testing.T) {
 	{
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 }
@@ -205,7 +205,7 @@ func TestBasic_Namespaced_Release(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -219,7 +219,7 @@ func TestBasic_Namespaced_Release(t *testing.T) {
 		}
 		err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", opts)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -232,7 +232,7 @@ func TestBasic_Namespaced_Release(t *testing.T) {
 	{
 		err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 		if !kubelock.IsNotFound(err) {
-			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
+			t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.JSON(err))
 		}
 	}
 }
