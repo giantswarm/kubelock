@@ -30,7 +30,7 @@ func TestBasic_ClusterScope(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -38,22 +38,22 @@ func TestBasic_ClusterScope(t *testing.T) {
 
 	err = lock.Acquire(ctx, "default", kubelock.AcquireOptions{})
 	if err != nil {
-		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+		t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 	}
 
 	err = lock.Acquire(ctx, "default", kubelock.AcquireOptions{})
 	if !kubelock.IsAlreadyExists(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 	}
 
 	err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 	if err != nil {
-		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+		t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 	}
 
 	err = lock.Release(ctx, "default", kubelock.ReleaseOptions{})
 	if !kubelock.IsNotFound(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
+		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.JSON(err))
 	}
 }
 
@@ -75,7 +75,7 @@ func TestBasic_Namespaced(t *testing.T) {
 
 		kubeLock, err = kubelock.New(c)
 		if err != nil {
-			t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+			t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 		}
 	}
 
@@ -83,21 +83,21 @@ func TestBasic_Namespaced(t *testing.T) {
 
 	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", kubelock.AcquireOptions{})
 	if err != nil {
-		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+		t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 	}
 
 	err = lock.Namespace("kube-system").Acquire(ctx, "kube-proxy", kubelock.AcquireOptions{})
 	if !kubelock.IsAlreadyExists(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.Stack(err))
+		t.Fatalf("error == %#v, want matching kubelock.IsAlreadyExists", microerror.JSON(err))
 	}
 
 	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 	if err != nil {
-		t.Fatalf("error == %#q, want nil", microerror.Stack(err))
+		t.Fatalf("error == %#q, want nil", microerror.JSON(err))
 	}
 
 	err = lock.Namespace("kube-system").Release(ctx, "kube-proxy", kubelock.ReleaseOptions{})
 	if !kubelock.IsNotFound(err) {
-		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.Stack(err))
+		t.Fatalf("error == %#v, want matching kubelock.IsNotFound", microerror.JSON(err))
 	}
 }

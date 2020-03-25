@@ -17,7 +17,7 @@ var (
 func init() {
 	err := initMainTest()
 	if err != nil {
-		panic(microerror.Stack(err))
+		panic(microerror.JSON(err))
 	}
 }
 
