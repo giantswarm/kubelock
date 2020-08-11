@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-08-11
+
 ### Changed
 
 - Update Kubernetes dependencies to v1.18.5.
@@ -22,6 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]: https://github.com/giantswarm/kubelock/compare/v0.2.0...HEAD
-
+[Unreleased]: https://github.com/giantswarm/kubelock/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/giantswarm/kubelock/compare/v0.2.0...v2.0.0
 [0.2.0]: https://github.com/giantswarm/kubelock/releases/tag/v0.2.0
