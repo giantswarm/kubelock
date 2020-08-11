@@ -20,7 +20,7 @@ type lock struct {
 func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions) error {
 	options = defaultedAcquireOptions(options)
 
-	obj, err := l.resource.Get(name, metav1.GetOptions{})
+	obj, err := l.resource.Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -66,7 +66,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions)
 
 	// Update object.
 	{
-		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
+		_, err := l.resource.Update(ctx, obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -78,7 +78,7 @@ func (l *lock) Acquire(ctx context.Context, name string, options AcquireOptions)
 func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions) error {
 	options = defaultedReleaseOptions(options)
 
-	obj, err := l.resource.Get(name, metav1.GetOptions{})
+	obj, err := l.resource.Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -117,7 +117,7 @@ func (l *lock) Release(ctx context.Context, name string, options ReleaseOptions)
 
 	// Update object.
 	{
-		_, err := l.resource.Update(obj, metav1.UpdateOptions{})
+		_, err := l.resource.Update(ctx, obj, metav1.UpdateOptions{})
 		if err != nil {
 			return microerror.Mask(err)
 		}

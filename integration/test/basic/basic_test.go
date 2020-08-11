@@ -6,7 +6,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/giantswarm/kubelock"
+	"github.com/giantswarm/kubelock/v2"
 
 	"github.com/giantswarm/microerror"
 	"k8s.io/apimachinery/pkg/runtime/schema"
