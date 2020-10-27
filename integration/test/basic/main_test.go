@@ -7,7 +7,7 @@ import (
 
 	"github.com/giantswarm/microerror"
 
-	"github.com/giantswarm/kubelock/v2/integration/setup"
+	"github.com/giantswarm/kubelock/v3/integration/setup"
 )
 
 var (

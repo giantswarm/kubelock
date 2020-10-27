@@ -3,11 +3,11 @@
 package setup
 
 import (
-	"github.com/giantswarm/k8sclient/v4/pkg/k8sclient"
+	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 
-	"github.com/giantswarm/kubelock/v2/integration/env"
+	"github.com/giantswarm/kubelock/v3/integration/env"
 )
 
 type Config struct {

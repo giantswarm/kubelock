@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update k8sclient to v5.
+- Prepare module v3.
+
 ## [2.0.0] - 2020-08-11
 
 ### Changed
