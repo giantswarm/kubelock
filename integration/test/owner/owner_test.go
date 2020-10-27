@@ -9,7 +9,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/giantswarm/kubelock/v2"
+	"github.com/giantswarm/kubelock/v3"
 )
 
 func TestOwner_ClusterScope(t *testing.T) {
