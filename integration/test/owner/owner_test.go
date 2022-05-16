@@ -1,3 +1,4 @@
+//go:build k8srequired
 // +build k8srequired
 
 package owner
@@ -9,7 +10,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/giantswarm/kubelock/v3"
+	"github.com/giantswarm/kubelock/v4"
 )
 
 func TestOwner_ClusterScope(t *testing.T) {

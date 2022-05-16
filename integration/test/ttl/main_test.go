@@ -1,3 +1,4 @@
+//go:build k8srequired
 // +build k8srequired
 
 package ttl
@@ -7,7 +8,7 @@ import (
 
 	"github.com/giantswarm/microerror"
 
-	"github.com/giantswarm/kubelock/v3/integration/setup"
+	"github.com/giantswarm/kubelock/v4/integration/setup"
 )
 
 var (

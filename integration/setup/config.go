@@ -1,13 +1,14 @@
+//go:build k8srequired
 // +build k8srequired
 
 package setup
 
 import (
-	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
+	"github.com/giantswarm/k8sclient/v7/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 
-	"github.com/giantswarm/kubelock/v3/integration/env"
+	"github.com/giantswarm/kubelock/v4/integration/env"
 )
 
 type Config struct {
