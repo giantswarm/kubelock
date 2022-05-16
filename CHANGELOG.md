@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2022-05-16
+
 ### Changed
 
 - Upgrade dependencies.
@@ -35,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]: https://github.com/giantswarm/kubelock/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kubelock/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/giantswarm/kubelock/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/giantswarm/kubelock/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/giantswarm/kubelock/compare/v0.2.0...v2.0.0
 [0.2.0]: https://github.com/giantswarm/kubelock/releases/tag/v0.2.0
