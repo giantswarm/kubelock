@@ -1,3 +1,4 @@
+//go:build k8srequired
 // +build k8srequired
 
 package ttl
@@ -7,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/giantswarm/kubelock/v3"
+	"github.com/giantswarm/kubelock/v4"
 
 	"github.com/giantswarm/microerror"
 	"k8s.io/apimachinery/pkg/runtime/schema"
