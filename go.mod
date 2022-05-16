@@ -1,6 +1,6 @@
 module github.com/giantswarm/kubelock/v4
 
-go 1.18
+go 1.17
 
 require (
 	github.com/giantswarm/k8sclient/v7 v7.0.1
